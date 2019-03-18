@@ -15,9 +15,9 @@ def handle_com(con, addr):
             print("Sent data")
     except:
         print("Problem in request ?")
-    finally:
-        print("finally : Closed socket")
-        con.close()
+    #finally:
+        #print("finally : Closed socket")
+        #con.close()
  
  
 if __name__ == "__main__":
