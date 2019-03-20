@@ -14,9 +14,9 @@ from socket import * # sockets
 from threading import Thread # thread
 import sys
 import os
-#store information of the clients
+#stocke les infos sur les clients
 clients = []
-#store clients in a private chat
+#stocke les clients dans un chat privé
 privateChat = []
 #thread that receives inputs at the server terminal 
 def listClients():
@@ -75,10 +75,10 @@ def clientManager(connectionSocket,t_id):
 		except:
 			os._exit(0)	
 		serv_response = "%s sent: %s" % (clients[t_id][1],message)
-		#store the id of who sent the message
+		#stocke l'id du client qui a envoyé le message
 		clientSender = t_id
 		print serv_response
-		#change nickname
+		#changement de pseudo
 		if "name(" in message:
 			new_name = message.split('name(')
 			new_name = new_name[1].split(')')
@@ -97,7 +97,7 @@ def clientManager(connectionSocket,t_id):
 				for i in range(0, len(clients)):
 					if clients[i][2]==0:
 						clients[i][0].send(nick_change)
-		#send list of connected users
+		#envoie de la liste des utilisateurs connectés
 		elif "list()" in message:
 			for i in range(0, len(clients)):
 				if clients[i][2]==0:
@@ -105,68 +105,66 @@ def clientManager(connectionSocket,t_id):
 					clients[t_id][0].send(send_list)
 
 		elif "private(" in message :
-			#404 means target not found
+			#404 signifie que l'utilisateur cible n'existe pas
 			idTarget = 404
 			clientTargetName = message.split('private(')
 			clientTargetName = clientTargetName[1].split(')')
 			clientTargetName = clientTargetName[0]
-			#store the id of the user who requested the private chat
+			#stocke l'id de l'utilisateur qui a demandé un chat privé
 			clientInviteSourceId = clientSender
-			privateInvitation = "%s invited you to a private chat. Accept(S/N)? " %(clients[clientSender][1])
-			#store target id
+			privateInvitation = "%s invited you to a private chat. Accept(Y/N)? " %(clients[clientSender][1])
+			#stocke l'id de l'utilisateur cible
 			for i in range(0, len(clients)):
 				if clients[i][1]==clientTargetName:
 					idTarget = i
-			#sending the message to the found client, if connected
+			#envoie le message à la cible (existante) si il est connecté
 			if idTarget != 404:
-				#indicates that the client was requested to a private chat 
+				#indique que le client cible a reçu une demande de chat privé
 				clients[idTarget][4]=1
-				#store the id of who sent the request and the one who is going to connect 
+				#stocke l'id de l'utilisateur qui a demandé un chat privé et celle de la cible
 				clients[idTarget][5] = clientSender
 				clients[clientSender][5] = idTarget
 				clients[idTarget][0].send(privateInvitation)
 				print clientSender
-		#verifies if the next message came from a client who received the request of a private chat	
+		#vérifie si le message suivant vient d'un client qui a reçu une demande de chat privé	
 		elif clients[clientSender][4]==1 and clients[clientSender][6] == 0:
 			if message=="N" :
-				#return to the status of not invited to private chat
+				#reste dans le chat publique
 				clients[clientSender][4]=0
 				idToReply = clients[clientSender][5]
-				#erases the id of who requested the chat in the list
+				#efface l'id de celui qui a demandé le chat privé
 				clients[clientSender][5]=404
-				#return message to the "requester"
 				inviteReply = "Invite refused by %s" %(clients[clientSender][1])
-				#send the message
 				clients[idToReply][0].send(inviteReply)
-			elif message == "S":
-				#store the id of the two clients who are going to enter in a private chat
+			elif message == "Y":
+				#stocke l'id des deux clients qui vont participer au chat privé
 				client1 = clientSender
 				client2 = clients[clientSender][5]
 				privateChat.append([client1,client2])
-				#change the status to keep track of the private chat
+				#change le statut pour garder une trace du chat privé
 				clients[client1][6] = 1
 				clients[client2][6] = 1
 				clients[client1][0].send("You are in a private chat with %s" %(clients[client2][1]))
 				clients[client2][0].send("You are in a private chat with %s" %(clients[client1][1]))
 
 		elif clients[clientSender][6]==1:
-			if message=="sair":
+			if message=="close pchat":
 				id1 = clientSender
 				id2 = clients[clientSender][5]
-				#return to the configurations of not being in a private chat
+				#retourne à un statut publique
 				clients[id1][6] = 0
 				clients[id2][6] = 0
 				clients[id1][4] = 0
 				clients[id2][4] = 0
 				clients[id1][5] = 404
 				clients[id2][5] = 404
-				clients[id1][0].send("Chat privado encerrado")
-				clients[id2][0].send("Chat privado encerrado")
+				clients[id1][0].send("Private chat cancelled")
+				clients[id2][0].send("Private chat cancelled")
 			else :
-				#send the private chat messages
+				#envoie les messages du private chat
 				idToSendPrivateMessage = clients[clientSender][5]
 				clients[idToSendPrivateMessage][0].send(serv_response)
-		#send the message to all users
+		#envoie le message à tous les utilisateurs
 		else:
 
 			if message == "close":
@@ -187,11 +185,11 @@ def clientManager(connectionSocket,t_id):
 	
 
 serverName = '' # server ip
-serverPort = 12000 # port to be connected
+serverPort = 12000 # port
 global serverSocket
-serverSocket = socket(AF_INET,SOCK_STREAM) # TCP socket creation
+serverSocket = socket(AF_INET,SOCK_STREAM) # TCP socket
 try:
-	serverSocket.bind((serverName,serverPort)) # bind server ip with its port
+	serverSocket.bind((serverName,serverPort))
 except:
 	print "Port already in use"
 	serverSocket.close()
@@ -202,11 +200,11 @@ serverSocket.listen(1)
 print "TCP server waiting connections on port %d ..." % (serverPort)
 counter = 0
 while 1:
-	#indicates if it was invited to a private chat
+	#indique si il a été invité à un chat privé
 	flagInvP=0
-	#inicializes who invited
+	#initialise celui qui a invité
 	inviterID=0
-	#inicializes who is in private chat
+	#initialise ceux qui sont dans le chat privé
 	inPrivateChat = 0
 	try:
 		connectionSocket, addr = serverSocket.accept() 
