@@ -1,3 +1,5 @@
+# _*_ coding: utf-8 _*_
+
 """
 clients array:
 0 - Socket
@@ -14,6 +16,8 @@ from socket import * # sockets
 from threading import Thread # thread
 import sys
 import os
+
+
 #stocke les infos sur les clients
 clients = []
 #stocke les clients dans un chat privé

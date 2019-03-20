@@ -1,3 +1,5 @@
+# _*_ coding: utf-8 _*_
+
 from socket import *
 from threading import Thread # thread
 import sys
