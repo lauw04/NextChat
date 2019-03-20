@@ -23,7 +23,7 @@ def handle_com(con, addr):
 if __name__ == "__main__":
     try:
         socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        socket.bind(("0.0.0.0",8888))
+        socket.bind(("127.0.0.1",8888))
         socket.listen(1)
         print("Listening")
         while True:
