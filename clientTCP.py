@@ -5,11 +5,11 @@ import os
 import time
 
 sentence = ""
-#print messages parallelly from the server
+#affiche les messages parallèlement depuis le serveur
 def receiveMessage(clientSocket):
 	try:
 		while 1:
-			msgRecebida = clientSocket.recv(1024) # receive server response
+			msgRecebida = clientSocket.recv(1024) # reçoit une réponse du serveur
 			print '%s' % (msgRecebida)
 			if msgRecebida == "close":
 				clientSocket.shutdown(socket.SHUT_RDWR) 
@@ -20,13 +20,13 @@ def receiveMessage(clientSocket):
 	except:
 		os._exit(0)	
 
-serverName = 'localhost' # server ip
-serverPort = 12000 # connection port
-clientSocket = socket(AF_INET,SOCK_STREAM) # TCP socket creation
-clientSocket.connect((serverName, serverPort)) # connect the socket to the server
+serverName = 'localhost' # adresse ip du serveur
+serverPort = 12000 # port de connexion
+clientSocket = socket(AF_INET,SOCK_STREAM) # création de la socket TCP
+clientSocket.connect((serverName, serverPort)) # connecte la socket au serveur
 sentence = raw_input('Type your nickname: ')
-clientSocket.send(sentence) # send the nickname to the server 
-modifiedSentence = clientSocket.recv(1024) # receive server response
+clientSocket.send(sentence) # envoie le pseudo au serveur 
+modifiedSentence = clientSocket.recv(1024) # reçoit une réponse du serveur
 print 'The server (\'%s\', %d) responded with: %s' % (serverName, serverPort, modifiedSentence)
 t = Thread(target=receiveMessage, args=(clientSocket,))
 t.daemon = True
@@ -35,9 +35,9 @@ while 1:
 	try:
 		sentence = raw_input('')
 		if sentence == "close":
-			clientSocket.send("sair") # leave private chat
+			clientSocket.send("close pchat") # quitte le chat privé
 			time.sleep(2)
-			clientSocket.send("close") # leave global chat 
+			clientSocket.send("close") # quitte le chat global
 			clientSocket.shutdown(socket.SHUT_RDWR) 
 			clientSocket.close()
 			os._exit(0)
