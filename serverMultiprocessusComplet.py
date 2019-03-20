@@ -1,3 +1,4 @@
+
 """
 clients array:
 0 - Socket
@@ -219,3 +220,4 @@ while 1:
 	t.start()
 	counter += 1
 serverSocket.close() 
+
