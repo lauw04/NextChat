@@ -62,17 +62,23 @@ def clientManager(connectionSocket,t_id):
 		sentence = connectionSocket.recv(1024) 
 		good_name = "yes"
 		for i in range(0, len(clients)):
-			if sentence == clients[i][1]:
+			if sentence == clients[i][1] and clients[i][2]==0:
 				good_name = "no"
 				connectionSocket.send("Name already in use, choose another nickname:")
 				break
+			elif sentence == clients[i][1]:
+				clients[i][2]=0
 	
 	clients[t_id][1] = sentence
 	clients[t_id][4] = 0
 	clients[t_id][5] = 404
 	clients[t_id][6] = 0
+<<<<<<< HEAD
 	
 	identification = "Cliente %s has logged in." % (sentence)
+=======
+	identification = "Client %s has logged in." % (sentence)
+>>>>>>> 4993a16d35392f00fc18a5ebe4d9c74dc2afb291
 	print identification
 	for i in range(0, len(clients)):
 			if clients[i][2]==0:

@@ -43,7 +43,9 @@ while 1:
 			clientSocket.shutdown(socket.SHUT_RDWR) 
 			clientSocket.close()
 			os._exit(0)
-			#break
+		if sentence == "closepchat":
+			clientSocker.send("closepchat")
+
 		clientSocket.send(sentence) 
 	except:
 		os._exit(0)	
