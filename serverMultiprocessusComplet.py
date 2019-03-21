@@ -59,16 +59,18 @@ def clientManager(connectionSocket,t_id):
 		sentence = connectionSocket.recv(1024) 
 		good_name = "yes"
 		for i in range(0, len(clients)):
-			if sentence == clients[i][1]:
+			if sentence == clients[i][1] and clients[i][2]==0:
 				good_name = "no"
 				connectionSocket.send("Name already in use, choose another nickname:")
 				break
+			elif sentence == clients[i][1]:
+				clients[i][2]=0
 	
 	clients[t_id][1] = sentence
 	clients[t_id][4] = 0
 	clients[t_id][5] = 404
 	clients[t_id][6] = 0
-	identification = "Cliente %s has logged in." % (sentence)
+	identification = "Client %s has logged in." % (sentence)
 	print identification
 	for i in range(0, len(clients)):
 			if clients[i][2]==0:
@@ -82,27 +84,8 @@ def clientManager(connectionSocket,t_id):
 		#stocke l'id du client qui a envoyé le message
 		clientSender = t_id
 		print serv_response
-		#changement de pseudo
-		if "name(" in message:
-			new_name = message.split('name(')
-			new_name = new_name[1].split(')')
-			new_name = new_name[0]	
-			good_name = "yes"
-			for i in range(0, len(clients)):
-				if new_name == clients[i][1]:
-					good_name = "no"
-					break
-			if good_name == "no":
-				clients[t_id][0].send("Name already in use, choose another nickname:")
-			else:
-				nick_change = "%s changed to: %s"%(clients[t_id][1],new_name)
-				clients[t_id][1] = new_name
-				print "New nick is: %s"%new_name
-				for i in range(0, len(clients)):
-					if clients[i][2]==0:
-						clients[i][0].send(nick_change)
 		#envoie de la liste des utilisateurs connectés
-		elif "list()" in message:
+		if "list()" in message:
 			for i in range(0, len(clients)):
 				if clients[i][2]==0:
 					send_list = "name: %s ip: %s port: 12000\n"%(clients[i][1],clients[i][3]) 
@@ -152,7 +135,7 @@ def clientManager(connectionSocket,t_id):
 				clients[client2][0].send("You are in a private chat with %s" %(clients[client1][1]))
 
 		elif clients[clientSender][6]==1:
-			if message=="close pchat":
+			if message=="closepchat":
 				id1 = clientSender
 				id2 = clients[clientSender][5]
 				#retourne à un statut publique
