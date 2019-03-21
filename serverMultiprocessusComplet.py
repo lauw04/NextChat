@@ -6,9 +6,10 @@ clients array:
 1 - nickname
 2 - active client or not (0 active , -1 disconnected)
 3 - client ip
-4 - invited to private chat with someone (0 no ,1 yes)
+4 - en recherche (0 no ,1 yes)
 5 - id of who invited/is connected
 6 - is it in private chat?(0 - no , 1-yes)
+7 - password
 """
 
 
@@ -22,7 +23,7 @@ import os
 clients = []
 #stocke les clients en recherche
 research = []
-#stocke les clients dans un chat privé
+#stocke les clients qui sont ou ont été dans un chat privé
 privateChat = []
 #thread that receives inputs at the server terminal 
 def listClients():
@@ -70,6 +71,7 @@ def clientManager(connectionSocket,t_id):
 	clients[t_id][4] = 0
 	clients[t_id][5] = 404
 	clients[t_id][6] = 0
+	
 	identification = "Cliente %s has logged in." % (sentence)
 	print identification
 	for i in range(0, len(clients)):
@@ -85,7 +87,7 @@ def clientManager(connectionSocket,t_id):
 		clientSender = t_id
 		print serv_response
 		#changement de pseudo
-		if "name(" in message:
+		"""if "name(" in message:
 			new_name = message.split('name(')
 			new_name = new_name[1].split(')')
 			new_name = new_name[0]	
@@ -102,15 +104,15 @@ def clientManager(connectionSocket,t_id):
 				print "New nick is: %s"%new_name
 				for i in range(0, len(clients)):
 					if clients[i][2]==0:
-						clients[i][0].send(nick_change)
+						clients[i][0].send(nick_change)"""
 		#envoie de la liste des utilisateurs connectés
-		elif "list()" in message:
+		elif "list" in message:
 			for i in range(0, len(clients)):
 				if clients[i][2]==0:
 					send_list = "name: %s ip: %s port: 12000\n"%(clients[i][1],clients[i][3]) 
 					clients[t_id][0].send(send_list)
 
-		elif "private(" in message :
+		"""elif "private(" in message :
 			#404 signifie que l'utilisateur cible n'existe pas
 			idTarget = 404
 			clientTargetName = message.split('private(')
@@ -140,7 +142,14 @@ def clientManager(connectionSocket,t_id):
 				clients[client1][6] = 1
 				clients[client2][6] = 1
 				clients[client1][0].send("You are in a private chat with %s" %(clients[client2][1]))
-				clients[client2][0].send("You are in a private chat with %s" %(clients[client1][1]))
+				clients[client2][0].send("You are in a private chat with %s" %(clients[client1][1]))"""
+
+		elif len(research)>=2 :
+
+		
+		elif "start" in message : 
+			clients[clientSender][4]=1
+			research.append(clients[clientSender])
 
 		elif clients[clientSender][6]==1:
 			if message=="next":
@@ -149,12 +158,14 @@ def clientManager(connectionSocket,t_id):
 				#retourne à un statut publique
 				clients[id1][6] = 0
 				clients[id2][6] = 0
-				clients[id1][4] = 0
-				clients[id2][4] = 0
+				clients[id1][4] = 1
+				clients[id2][4] = 1
 				clients[id1][5] = 404
 				clients[id2][5] = 404
-				clients[id1][0].send("Private chat cancelled")
-				clients[id2][0].send("Private chat cancelled")
+				clients[id1][0].send("NextChat terminé")
+				clients[id2][0].send("NextChat terminé")
+				research.append(clients[id1])
+				research.append(clients[id2])
 			else :
 				#envoie les messages du private chat
 				idToSendPrivateMessage = clients[clientSender][5]

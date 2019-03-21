@@ -26,8 +26,8 @@ serverName = 'localhost' # adresse ip du serveur
 serverPort = 12000 # port de connexion
 clientSocket = socket(AF_INET,SOCK_STREAM) # création de la socket TCP
 clientSocket.connect((serverName, serverPort)) # connecte la socket au serveur
-sentence = raw_input('Type your nickname: ')
-clientSocket.send(sentence) # envoie le pseudo au serveur 
+nickname = raw_input('Type your nickname: ')
+clientSocket.send(nickname) # envoie le pseudo au serveur 
 modifiedSentence = clientSocket.recv(1024) # reçoit une réponse du serveur
 print 'The server (\'%s\', %d) responded with: %s' % (serverName, serverPort, modifiedSentence)
 t = Thread(target=receiveMessage, args=(clientSocket,))
