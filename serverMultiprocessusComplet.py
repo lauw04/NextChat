@@ -188,17 +188,19 @@ def clientManager(connectionSocket,t_id):
 		#envoie le message à tous les utilisateurs
 		if message == "close":
 			id1 = clientSender
-			id2 = clients[clientSender][5]
+			if clients[clientSender][6]==1:
+				id2 = clients[clientSender][5]
+				clients[id2][6] = 0
+				clients[id2][4] = 1
+				clients[id2][5] = 404
+				clients[id2][5] = 404
+				clients[id2][0].send("NextChat terminé")
+				research.append(clients[id2])
 			#retourne à un statut publique
 			clients[id1][6] = 0
-			clients[id2][6] = 0
 			clients[id1][4] = 1
-			clients[id2][4] = 1
 			clients[id1][5] = 404
-			clients[id2][5] = 404
 			clients[id1][0].send("NextChat terminé")
-			clients[id2][0].send("NextChat terminé")
-			research.append(clients[id2])
 			clients[t_id][2]=-1
 			serv_response = "Client %s left the room."%clients[t_id][1]
 			print "Client %s left the room."%clients[t_id][1]
