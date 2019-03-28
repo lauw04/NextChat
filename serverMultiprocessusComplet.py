@@ -28,18 +28,18 @@ privateChat = []
 #thread that receives inputs at the server terminal 
 def listClients():
 	while 1:
-		somethin = raw_input('see list?\n')
-		#list all available connections
-		if somethin == "list()":
+		sentence = raw_input('see list?\n')
+		#liste les clients connectés
+		if sentence == "list()":
 			if len(clients) !=0:
 				for i in range(0, len(clients)):
-					#checks which clients are connected
+					
 					if clients[i][2]==0:
 						print "name: %s ip: %s port: 12000"%(clients[i][1],clients[i][3])
 			else: 
 				print "no such clients logged" 
 					
-		elif somethin == "close()":
+		elif sentence == "close()":
 			for i in range(0, len(clients)):
 				if clients[i][2]==0:
 					try:
