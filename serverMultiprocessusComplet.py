@@ -9,7 +9,6 @@ clients array:
 4 - en recherche (0 no ,1 yes)
 5 - id of who invited/is connected
 6 - is it in private chat?(0 - no , 1-yes)
-7 - password
 """
 
 
@@ -73,12 +72,8 @@ def clientManager(connectionSocket,t_id):
 	clients[t_id][4] = 0
 	clients[t_id][5] = 404
 	clients[t_id][6] = 0
-<<<<<<< HEAD
-	
-	identification = "Cliente %s has logged in." % (sentence)
-=======
+
 	identification = "Client %s has logged in." % (sentence)
->>>>>>> 4993a16d35392f00fc18a5ebe4d9c74dc2afb291
 	print identification
 	for i in range(0, len(clients)):
 			if clients[i][2]==0:
@@ -92,31 +87,14 @@ def clientManager(connectionSocket,t_id):
 		#stocke l'id du client qui a envoyé le message
 		clientSender = t_id
 		print serv_response
-		#changement de pseudo
-		"""if "name(" in message:
-			new_name = message.split('name(')
-			new_name = new_name[1].split(')')
-			new_name = new_name[0]	
-			good_name = "yes"
-			for i in range(0, len(clients)):
-				if new_name == clients[i][1]:
-					good_name = "no"
-					break
-			if good_name == "no":
-				clients[t_id][0].send("Name already in use, choose another nickname:")
-			else:
-				nick_change = "%s changed to: %s"%(clients[t_id][1],new_name)
-				clients[t_id][1] = new_name
-				print "New nick is: %s"%new_name
-				for i in range(0, len(clients)):
-					if clients[i][2]==0:
-						clients[i][0].send(nick_change)"""
+
+
 		#envoie de la liste des utilisateurs connectés
-		elif "list" in message:
-			for i in range(0, len(clients)):
-				if clients[i][2]==0:
-					send_list = "name: %s ip: %s port: 12000\n"%(clients[i][1],clients[i][3]) 
-					clients[t_id][0].send(send_list)
+    if "list" in message:
+      for i in range(0, len(clients)):
+        if clients[i][2]==0:
+          send_list = "name: %s ip: %s port: 12000\n"%(clients[i][1],clients[i][3]) 
+          clients[t_id][0].send(send_list)
 
 		"""elif "private(" in message :
 			#404 signifie que l'utilisateur cible n'existe pas
@@ -150,51 +128,51 @@ def clientManager(connectionSocket,t_id):
 				clients[client1][0].send("You are in a private chat with %s" %(clients[client2][1]))
 				clients[client2][0].send("You are in a private chat with %s" %(clients[client1][1]))"""
 
-		elif len(research)>=2 :
+		"""elif len(research)>=2 :"""
 
 		
-		elif "start" in message : 
-			clients[clientSender][4]=1
-			research.append(clients[clientSender])
+    elif "start" in message : 
+      clients[clientSender][4]=1
+      research.append(clients[clientSender])
 
-		elif clients[clientSender][6]==1:
-			if message=="next":
-				id1 = clientSender
-				id2 = clients[clientSender][5]
+    elif clients[clientSender][6]==1:
+      if message=="next":
+        id1 = clientSender
+        id2 = clients[clientSender][5]
 				#retourne à un statut publique
-				clients[id1][6] = 0
-				clients[id2][6] = 0
-				clients[id1][4] = 1
-				clients[id2][4] = 1
-				clients[id1][5] = 404
-				clients[id2][5] = 404
-				clients[id1][0].send("NextChat terminé")
-				clients[id2][0].send("NextChat terminé")
-				research.append(clients[id1])
-				research.append(clients[id2])
-			else :
+        clients[id1][6] = 0
+        clients[id2][6] = 0
+        clients[id1][4] = 1
+        clients[id2][4] = 1
+        clients[id1][5] = 404
+        clients[id2][5] = 404
+        clients[id1][0].send("NextChat terminé")
+        clients[id2][0].send("NextChat terminé")
+        research.append(clients[id1])
+        research.append(clients[id2])
+      else :
 				#envoie les messages du private chat
-				idToSendPrivateMessage = clients[clientSender][5]
-				clients[idToSendPrivateMessage][0].send(serv_response)
+        idToSendPrivateMessage = clients[clientSender][5]
+        clients[idToSendPrivateMessage][0].send(serv_response)
 		#envoie le message à tous les utilisateurs
-		else:
+    else:
 
-			if message == "close":
-				clients[t_id][2]=-1
-				serv_response = "Client %s left the room."%clients[t_id][1]
-				print "Client %s left the room."%clients[t_id][1]
-				for i in range(0, len(clients)):
-					if clients[i][2]==0 and i!= clientSender:
-						clients[i][0].send(serv_response)	
-				break
-			elif message != "next":
-				for i in range(0, len(clients)):
-					if clients[i][2]==0 and i!= clientSender and clients[i][6]!=1:
-						clients[i][0].send(serv_response)
+      if message == "close":
+        clients[t_id][2]=-1
+        serv_response = "Client %s left the room."%clients[t_id][1]
+        print "Client %s left the room."%clients[t_id][1]
+        for i in range(0, len(clients)):
+          if clients[i][2]==0 and i!= clientSender:
+            clients[i][0].send(serv_response)	
+        break
+      elif message != "next":
+        for i in range(0, len(clients)):
+          if clients[i][2]==0 and i!= clientSender and clients[i][6]!=1:
+            clients[i][0].send(serv_response)
 
 						
 			
-	connectionSocket.close()
+  connectionSocket.close()
 	
 
 serverName = '' # server ip
@@ -202,11 +180,11 @@ serverPort = 12000 # port
 global serverSocket
 serverSocket = socket(AF_INET,SOCK_STREAM) # TCP socket
 try:
-	serverSocket.bind((serverName,serverPort))
+  serverSocket.bind((serverName,serverPort))
 except:
-	print "Port already in use"
-	serverSocket.close()
-	os._exit(0)
+  print "Port already in use"
+  serverSocket.close()
+  os._exit(0)
 t = Thread(target=listClients, args=())
 t.start()
 serverSocket.listen(1) 
@@ -214,20 +192,20 @@ print "TCP server waiting connections on port %d ..." % (serverPort)
 counter = 0
 while 1:
 	#indique si il a été invité à un chat privé
-	flagInvP=0
+  flagInvP=0
 	#initialise celui qui a invité
-	inviterID=0
+  inviterID=0
 	#initialise ceux qui sont dans le chat privé
-	inPrivateChat = 0
-	try:
-		connectionSocket, addr = serverSocket.accept() 
-	except:
-		serverSocket.close()
-		os._exit(0)
-	clients.append([connectionSocket,0,0,addr,flagInvP,inviterID,inPrivateChat])
+  inPrivateChat = 0
+  try:
+    connectionSocket, addr = serverSocket.accept() 
+  except:
+    serverSocket.close()
+    os._exit(0)
+  clients.append([connectionSocket,0,0,addr,flagInvP,inviterID,inPrivateChat])
 
-	t = Thread(target=clientManager, args=(connectionSocket,counter,))
-	t.start()
-	counter += 1
+  t = Thread(target=clientManager, args=(connectionSocket,counter,))
+  t.start()
+  counter += 1
 serverSocket.close() 
 
