@@ -37,8 +37,8 @@ while 1:
 	try:
 		sentence = raw_input('')
 		if sentence == "close":
-			clientSocket.send("next") # quitte le chat privé
-			time.sleep(2)
+			#clientSocket.send("next") # quitte le chat privé
+			#time.sleep(2)
 			clientSocket.send("close") # quitte le chat global
 			clientSocket.shutdown(socket.SHUT_RDWR) 
 			clientSocket.close()
