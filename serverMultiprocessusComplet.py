@@ -9,6 +9,7 @@ clients array:
 4 - en recherche (0 no ,1 yes)
 5 - id of who invited/is connected
 6 - is it in private chat?(0 - no , 1-yes)
+7 - password
 """
 
 
@@ -99,8 +100,9 @@ def clientManager(connectionSocket,t_id):
 					clientTargetName = research[1][1]
 					if clients[i][1]==clientTargetName:
 						idTarget = i
-			if idTarget != 404:
+			if idTarget != 404 and clients[idTarget][6] == 0:
 				clients[idTarget][4]=1
+				clients[t_id][4]=1
 				clients[clientSender][5] = idTarget
 				clients[idTarget][5] = clientSender
 				#stocke l'id des deux clients qui vont participer au chat privé
@@ -111,15 +113,6 @@ def clientManager(connectionSocket,t_id):
 				clients[client1][6] = 1
 				clients[client2][6] = 1
 				clients[client1][0].send("You are in a private chat with %s" %(clients[client2][1]))
-
-    elif "start" in message : 
-      clients[clientSender][4]=1
-      research.append(clients[clientSender])
-
-    elif clients[clientSender][6]==1:
-      if message=="next":
-        id1 = clientSender
-        id2 = clients[clientSender][5]
 				clients[client2][0].send("You are in a private chat with %s" %(clients[client1][1]))
 				for i in range(0,len(research)):
 					if research[i][1] == clients[clientSender][1]:
@@ -139,73 +132,74 @@ def clientManager(connectionSocket,t_id):
 				id1 = clientSender
 				id2 = clients[clientSender][5]
 				#retourne à un statut publique
-        clients[id1][6] = 0
-        clients[id2][6] = 0
-        clients[id1][4] = 1
-        clients[id2][4] = 1
-        clients[id1][5] = 404
-        clients[id2][5] = 404
-        clients[id1][0].send("NextChat terminé")
-        clients[id2][0].send("NextChat terminé")
-        research.append(clients[id1])
-        research.append(clients[id2])
-      else :
+				clients[id1][6] = 0
+				clients[id2][6] = 0
+				clients[id1][4] = 1
+				clients[id2][4] = 1
+				clients[id1][5] = 404
+				clients[id2][5] = 404
+				clients[id1][0].send("NextChat terminé")
+				clients[id2][0].send("NextChat terminé")
+				research.append(clients[id1])
+				research.append(clients[id2])
+			else :
 				#envoie les messages du private chat
-        idToSendPrivateMessage = clients[clientSender][5]
-        clients[idToSendPrivateMessage][0].send(serv_response)
+				idToSendPrivateMessage = clients[clientSender][5]
+				clients[idToSendPrivateMessage][0].send(serv_response)
 		#envoie le message à tous les utilisateurs
-    else:
+		else:
 
-      if message == "close":
-        clients[t_id][2]=-1
-        serv_response = "Client %s left the room."%clients[t_id][1]
-        print "Client %s left the room."%clients[t_id][1]
-        for i in range(0, len(clients)):
-          if clients[i][2]==0 and i!= clientSender:
-            clients[i][0].send(serv_response)	
-        break
-      elif message != "next":
-        for i in range(0, len(clients)):
-          if clients[i][2]==0 and i!= clientSender and clients[i][6]!=1:
-            clients[i][0].send(serv_response)
+			if message == "close":
+				clients[t_id][2]=-1
+				serv_response = "Client %s left the room."%clients[t_id][1]
+				print "Client %s left the room."%clients[t_id][1]
+				for i in range(0, len(clients)):
+					if clients[i][2]==0 and i!= clientSender:
+						clients[i][0].send(serv_response)	
+				break
+			elif message != "next":
+				for i in range(0, len(clients)):
+					if clients[i][2]==0 and i!= clientSender and clients[i][6]!=1:
+						clients[i][0].send(serv_response)
 
 						
 			
-  connectionSocket.close()
+	connectionSocket.close()
 	
+def main():
 
-serverName = '' # server ip
-serverPort = 12000 # port
-global serverSocket
-serverSocket = socket(AF_INET,SOCK_STREAM) # TCP socket
-try:
-  serverSocket.bind((serverName,serverPort))
-except:
-  print "Port already in use"
-  serverSocket.close()
-  os._exit(0)
-t = Thread(target=listClients, args=())
-t.start()
-serverSocket.listen(1) 
-print "TCP server waiting connections on port %d ..." % (serverPort)
-counter = 0
-while 1:
-	#indique si il a été invité à un chat privé
-  flagInvP=0
-	#initialise celui qui a invité
-  inviterID=0
-	#initialise ceux qui sont dans le chat privé
-  inPrivateChat = 0
-  try:
-    connectionSocket, addr = serverSocket.accept() 
-  except:
-    serverSocket.close()
-    os._exit(0)
-  clients.append([connectionSocket,0,0,addr,flagInvP,inviterID,inPrivateChat])
+	serverName = '' # server ip
+	serverPort = 12000 # port
+	global serverSocket
+	serverSocket = socket(AF_INET,SOCK_STREAM) # TCP socket
+	try:
+		serverSocket.bind((serverName,serverPort))
+	except:
+		print "Port already in use"
+		serverSocket.close()
+		os._exit(0)
+	t = Thread(target=listClients, args=())
+	t.start()
+	serverSocket.listen(1) 
+	print "TCP server waiting connections on port %d ..." % (serverPort)
+	counter = 0
+	while 1:
+		#indique si il a été invité à un chat privé
+		flagInvP=0
+		#initialise celui qui a invité
+		inviterID=0
+		#initialise ceux qui sont dans le chat privé
+		inPrivateChat = 0
+		try:
+			connectionSocket, addr = serverSocket.accept() 
+		except:
+			serverSocket.close()
+			os._exit(0)
+		clients.append([connectionSocket,0,0,addr,flagInvP,inviterID,inPrivateChat])
 
-  t = Thread(target=clientManager, args=(connectionSocket,counter,))
-  t.start()
-  counter += 1
-serverSocket.close() 
+		t = Thread(target=clientManager, args=(connectionSocket,counter,))
+		t.start()
+		counter += 1
+	serverSocket.close() 
 
-
+main()
