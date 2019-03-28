@@ -139,8 +139,8 @@ def clientManager(connectionSocket,t_id):
 				clients[id2][4] = 1
 				clients[id1][5] = 404
 				clients[id2][5] = 404
-				clients[id1][0].send("NextChat terminé")
-				clients[id2][0].send("NextChat terminé")
+				clients[id1][0].send("\nNextChat terminé")
+				clients[id2][0].send("\nNextChat terminé")
 				research.append(clients[id1])
 				research.append(clients[id2])
 
@@ -196,12 +196,12 @@ def clientManager(connectionSocket,t_id):
 			clients[id2][4] = 1
 			clients[id1][5] = 404
 			clients[id2][5] = 404
-			clients[id1][0].send("NextChat terminé")
-			clients[id2][0].send("NextChat terminé")
+			clients[id1][0].send("\nNextChat terminé")
+			clients[id2][0].send("\nNextChat terminé")
 			research.append(clients[id2])
 			clients[t_id][2]=-1
-			serv_response = "Client %s left the room."%clients[t_id][1]
-			print "Client %s left the room."%clients[t_id][1]
+			serv_response = "\nClient %s left the room."%clients[t_id][1]
+			print "\nClient %s left the room."%clients[t_id][1]
 			for i in range(0, len(clients)):
 				if clients[i][2]==0 and i!= clientSender:
 					clients[i][0].send(serv_response)	
