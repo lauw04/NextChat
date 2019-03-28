@@ -62,85 +62,49 @@ def clientManager(connectionSocket,t_id):
 		sentence = connectionSocket.recv(1024) 
 		good_name = "yes"
 		for i in range(0, len(clients)):
-			if sentence == clients[i][1] and clients[i][2]==0:
+			if sentence == clients[i][1] and clients[i][2]==0:# si le nom est déjà utilisé et que l'utilisateur est actif
 				good_name = "no"
 				connectionSocket.send("Name already in use, choose another nickname:")
 				break
-			elif sentence == clients[i][1]:
-				clients[i][2]=0
 	
 	clients[t_id][1] = sentence
 	clients[t_id][4] = 0
 	clients[t_id][5] = 404
 	clients[t_id][6] = 0
-<<<<<<< HEAD
-	
-	identification = "Cliente %s has logged in." % (sentence)
-=======
+
 	identification = "Client %s has logged in." % (sentence)
->>>>>>> 4993a16d35392f00fc18a5ebe4d9c74dc2afb291
 	print identification
 	for i in range(0, len(clients)):
-			if clients[i][2]==0:
-				clients[i][0].send(identification)
+		if clients[i][2]==0:
+			clients[i][0].send(identification)
 	while 1:	
 		try:
-			message = connectionSocket.recv(1024) # 
+			message = connectionSocket.recv(1024)
 		except:
 			os._exit(0)	
 		serv_response = "%s sent: %s" % (clients[t_id][1],message)
 		#stocke l'id du client qui a envoyé le message
 		clientSender = t_id
 		print serv_response
-		#changement de pseudo
-		"""if "name(" in message:
-			new_name = message.split('name(')
-			new_name = new_name[1].split(')')
-			new_name = new_name[0]	
-			good_name = "yes"
-			for i in range(0, len(clients)):
-				if new_name == clients[i][1]:
-					good_name = "no"
-					break
-			if good_name == "no":
-				clients[t_id][0].send("Name already in use, choose another nickname:")
-			else:
-				nick_change = "%s changed to: %s"%(clients[t_id][1],new_name)
-				clients[t_id][1] = new_name
-				print "New nick is: %s"%new_name
-				for i in range(0, len(clients)):
-					if clients[i][2]==0:
-						clients[i][0].send(nick_change)"""
-		#envoie de la liste des utilisateurs connectés
-		elif "list" in message:
-			for i in range(0, len(clients)):
-				if clients[i][2]==0:
-					send_list = "name: %s ip: %s port: 12000\n"%(clients[i][1],clients[i][3]) 
-					clients[t_id][0].send(send_list)
 
-		"""elif "private(" in message :
+		if len(research)>=2:
 			#404 signifie que l'utilisateur cible n'existe pas
 			idTarget = 404
-			clientTargetName = message.split('private(')
-			clientTargetName = clientTargetName[1].split(')')
-			clientTargetName = clientTargetName[0]
-			#stocke l'id de l'utilisateur qui a demandé un chat privé
-			clientInviteSourceId = clientSender
-			#privateInvitation = "%s invited you to a private chat. Accept(Y/N)? " %(clients[clientSender][1])
-			#stocke l'id de l'utilisateur cible
 			for i in range(0, len(clients)):
+				clientTargetName = research[0][1]
 				if clients[i][1]==clientTargetName:
 					idTarget = i
-			#envoie le message à la cible (existante) si il est connecté
+			if idTarget == t_id:
+				idTarget = 404
+				for i in range(0, len(clients)):
+					clientTargetName = research[1][1]
+					if clients[i][1]==clientTargetName:
+						idTarget = i
 			if idTarget != 404:
-				#indique que le client cible a reçu une demande de chat privé
 				clients[idTarget][4]=1
-				#stocke l'id de l'utilisateur qui a demandé un chat privé et celle de la cible
-				clients[idTarget][5] = clientSender
 				clients[clientSender][5] = idTarget
-				#clients[idTarget][0].send(privateInvitation)
-				print clientSender
-			  #stocke l'id des deux clients qui vont participer au chat privé
+				clients[idTarget][5] = clientSender
+				#stocke l'id des deux clients qui vont participer au chat privé
 				client1 = clientSender
 				client2 = clients[clientSender][5]
 				privateChat.append([client1,client2])
@@ -148,12 +112,17 @@ def clientManager(connectionSocket,t_id):
 				clients[client1][6] = 1
 				clients[client2][6] = 1
 				clients[client1][0].send("You are in a private chat with %s" %(clients[client2][1]))
-				clients[client2][0].send("You are in a private chat with %s" %(clients[client1][1]))"""
+				clients[client2][0].send("You are in a private chat with %s" %(clients[client1][1]))
+				for i in range(0,len(research)):
+					if research[i][1] == clients[clientSender][1]:
+						del research[i]
+						break
+				for i in range(0,len(research)):
+					if research[i][1] == clientTargetName:
+						del research[i]
+						break
 
-		elif len(research)>=2 :
-
-		
-		elif "start" in message : 
+		if "start" in message : 
 			clients[clientSender][4]=1
 			research.append(clients[clientSender])
 
@@ -230,4 +199,5 @@ while 1:
 	t.start()
 	counter += 1
 serverSocket.close() 
+
 
