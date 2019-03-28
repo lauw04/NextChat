@@ -38,8 +38,6 @@ def listClients():
 						print "name: %s ip: %s port: 12000"%(clients[i][1],clients[i][3])
 			else: 
 				print "no such clients logged" 
-				
-					
 					
 		elif somethin == "close()":
 			for i in range(0, len(clients)):
