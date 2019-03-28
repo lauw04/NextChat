@@ -9,7 +9,7 @@ clients array:
 4 - en recherche (0 no ,1 yes)
 5 - id of who invited/is connected
 6 - is it in private chat?(0 - no , 1-yes)
-7 - password
+7 - vient pas d'arriver (0 no, 1 yes)
 """
 
 
@@ -71,6 +71,7 @@ def clientManager(connectionSocket,t_id):
 	clients[t_id][4] = 0
 	clients[t_id][5] = 404
 	clients[t_id][6] = 0
+	clients[t_id][7] = 0
 
 	identification = "Client %s has logged in." % (sentence)
 	print identification
@@ -87,45 +88,45 @@ def clientManager(connectionSocket,t_id):
 		clientSender = t_id
 		print serv_response
 
-		if len(research)>=2:
-			#404 signifie que l'utilisateur cible n'existe pas
-			idTarget = 404
-			for i in range(0, len(clients)):
-				clientTargetName = research[0][1]
-				if clients[i][1]==clientTargetName:
-					idTarget = i
-			if idTarget == t_id:
-				idTarget = 404
-				for i in range(0, len(clients)):
-					clientTargetName = research[1][1]
-					if clients[i][1]==clientTargetName:
-						idTarget = i
-			if idTarget != 404 and clients[idTarget][6] == 0:
-				clients[idTarget][4]=1
-				clients[t_id][4]=1
-				clients[clientSender][5] = idTarget
-				clients[idTarget][5] = clientSender
-				#stocke l'id des deux clients qui vont participer au chat privé
-				client1 = clientSender
-				client2 = clients[clientSender][5]
-				privateChat.append([client1,client2])
-			  #change le statut pour garder une trace du chat privé
-				clients[client1][6] = 1
-				clients[client2][6] = 1
-				clients[client1][0].send("You are in a private chat with %s" %(clients[client2][1]))
-				clients[client2][0].send("You are in a private chat with %s" %(clients[client1][1]))
-				for i in range(0,len(research)):
-					if research[i][1] == clients[clientSender][1]:
-						del research[i]
-						break
-				for i in range(0,len(research)):
-					if research[i][1] == clientTargetName:
-						del research[i]
-						break
-
-		if "start" in message : 
+		if "start" in message and clients[t_id][7] == 0: 
+			clients[t_id][7] = 1
 			clients[clientSender][4]=1
 			research.append(clients[clientSender])
+			if len(research)>=2 and clients[clientSender][6]==0:
+					#404 signifie que l'utilisateur cible n'existe pas
+					idTarget = 404
+					for i in range(0, len(clients)):
+						clientTargetName = research[0][1]
+						if clients[i][1]==clientTargetName:
+							idTarget = i
+					if idTarget == t_id:
+						idTarget = 404
+						for i in range(0, len(clients)):
+							clientTargetName = research[1][1]
+							if clients[i][1]==clientTargetName:
+								idTarget = i
+					if idTarget != 404 and clients[idTarget][6] == 0:
+						clients[idTarget][4]=1
+						clients[t_id][4]=1
+						clients[clientSender][5] = idTarget
+						clients[idTarget][5] = clientSender
+						#stocke l'id des deux clients qui vont participer au chat privé
+						client1 = clientSender
+						client2 = clients[clientSender][5]
+						privateChat.append([client1,client2])
+						#change le statut pour garder une trace du chat privé
+						clients[client1][6] = 1
+						clients[client2][6] = 1
+						clients[client1][0].send("You are in a private chat with %s" %(clients[client2][1]))
+						clients[client2][0].send("You are in a private chat with %s" %(clients[client1][1]))
+						for i in range(0,len(research)):
+							if research[i][1] == clients[clientSender][1]:
+								del research[i]
+								break
+						for i in range(0,len(research)):
+							if research[i][1] == clientTargetName:
+								del research[i]
+								break
 
 		elif clients[clientSender][6]==1:
 			if message=="next":
@@ -142,25 +143,70 @@ def clientManager(connectionSocket,t_id):
 				clients[id2][0].send("NextChat terminé")
 				research.append(clients[id1])
 				research.append(clients[id2])
+
+				if len(research)>=3 and clients[clientSender][6]==0:
+					#404 signifie que l'utilisateur cible n'existe pas
+					idTarget = 404
+					for i in range(0, len(clients)):
+						clientTargetName = research[0][1]
+						if clients[i][1]==clientTargetName:
+							idTarget = i
+					if idTarget == t_id:
+						idTarget = 404
+						for i in range(0, len(clients)):
+							clientTargetName = research[1][1]
+							if clients[i][1]==clientTargetName:
+								idTarget = i
+					if idTarget != 404 and clients[idTarget][6] == 0:
+						clients[idTarget][4]=1
+						clients[t_id][4]=1
+						clients[clientSender][5] = idTarget
+						clients[idTarget][5] = clientSender
+						#stocke l'id des deux clients qui vont participer au chat privé
+						client1 = clientSender
+						client2 = clients[clientSender][5]
+						privateChat.append([client1,client2])
+						#change le statut pour garder une trace du chat privé
+						clients[client1][6] = 1
+						clients[client2][6] = 1
+						clients[client1][0].send("You are in a private chat with %s" %(clients[client2][1]))
+						clients[client2][0].send("You are in a private chat with %s" %(clients[client1][1]))
+						for i in range(0,len(research)):
+							if research[i][1] == clients[clientSender][1]:
+								del research[i]
+								break
+						for i in range(0,len(research)):
+							if research[i][1] == clientTargetName:
+								del research[i]
+								break
+
+
 			else :
 				#envoie les messages du private chat
 				idToSendPrivateMessage = clients[clientSender][5]
 				clients[idToSendPrivateMessage][0].send(serv_response)
 		#envoie le message à tous les utilisateurs
-		else:
+		if message == "close":
+			id1 = clientSender
+			id2 = clients[clientSender][5]
+			#retourne à un statut publique
+			clients[id1][6] = 0
+			clients[id2][6] = 0
+			clients[id1][4] = 1
+			clients[id2][4] = 1
+			clients[id1][5] = 404
+			clients[id2][5] = 404
+			clients[id1][0].send("NextChat terminé")
+			clients[id2][0].send("NextChat terminé")
+			research.append(clients[id2])
+			clients[t_id][2]=-1
+			serv_response = "Client %s left the room."%clients[t_id][1]
+			print "Client %s left the room."%clients[t_id][1]
+			for i in range(0, len(clients)):
+				if clients[i][2]==0 and i!= clientSender:
+					clients[i][0].send(serv_response)	
+			break
 
-			if message == "close":
-				clients[t_id][2]=-1
-				serv_response = "Client %s left the room."%clients[t_id][1]
-				print "Client %s left the room."%clients[t_id][1]
-				for i in range(0, len(clients)):
-					if clients[i][2]==0 and i!= clientSender:
-						clients[i][0].send(serv_response)	
-				break
-			elif message != "next":
-				for i in range(0, len(clients)):
-					if clients[i][2]==0 and i!= clientSender and clients[i][6]!=1:
-						clients[i][0].send(serv_response)
 
 						
 			
@@ -190,12 +236,15 @@ def main():
 		inviterID=0
 		#initialise ceux qui sont dans le chat privé
 		inPrivateChat = 0
+		#initialise ceux qui viennent d'arriver
+		arrival = 0
 		try:
 			connectionSocket, addr = serverSocket.accept() 
 		except:
 			serverSocket.close()
 			os._exit(0)
-		clients.append([connectionSocket,0,0,addr,flagInvP,inviterID,inPrivateChat])
+		clients.append([connectionSocket,0,0,addr,flagInvP,inviterID,inPrivateChat,arrival])
+
 
 		t = Thread(target=clientManager, args=(connectionSocket,counter,))
 		t.start()
