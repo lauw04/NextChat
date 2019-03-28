@@ -201,9 +201,10 @@ def clientManager(connectionSocket,t_id):
 			clients[id1][4] = 1
 			clients[id1][5] = 404
 			clients[id1][0].send("NextChat terminé")
+			clients[id1][0].send("\nNextChat terminé")
 			clients[t_id][2]=-1
-			serv_response = "Client %s left the room."%clients[t_id][1]
-			print "Client %s left the room."%clients[t_id][1]
+			serv_response = "\nClient %s left the room."%clients[t_id][1]
+			print "\nClient %s left the room."%clients[t_id][1]
 			for i in range(0, len(clients)):
 				if clients[i][2]==0 and i!= clientSender:
 					clients[i][0].send(serv_response)	
@@ -246,6 +247,7 @@ def main():
 			serverSocket.close()
 			os._exit(0)
 		clients.append([connectionSocket,0,0,addr,flagInvP,inviterID,inPrivateChat,arrival])
+
 
 		t = Thread(target=clientManager, args=(connectionSocket,counter,))
 		t.start()
