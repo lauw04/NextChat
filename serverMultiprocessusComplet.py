@@ -139,8 +139,8 @@ def clientManager(connectionSocket,t_id):
 				clients[id2][4] = 1
 				clients[id1][5] = 404
 				clients[id2][5] = 404
-				clients[id1][0].send("NextChat terminé")
-				clients[id2][0].send("NextChat terminé")
+				clients[id1][0].send("\nNextChat terminé")
+				clients[id2][0].send("\nNextChat terminé")
 				research.append(clients[id1])
 				research.append(clients[id2])
 
