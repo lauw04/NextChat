@@ -4,10 +4,7 @@ Nous avons effectué ce projet à quatre, nos pseudos github sont : Potdecol, Ju
 
 Dans notre cas, le principe reste le même mais uniquement avec du chat écrit.
 
-Vous trouverez dans le dossier deux versions du code, les deux sont fonctionnelles et possèdent leur spécificités. Ainsi, la version 1 permet d'éviter que deux utilisateurs discutent plusieurs fois d'affilée entre eux mais elle est moins optimisée en stockage et en simplicité d'écriture. La version 2 évite donc ces problèmes d'optimisation, mais les couples d'utilisateurs étant tirés aléatoirement il y a une faible probabilité que deux utiliseurs discutent ensemble plusieurs fois d'affilée.
-
-
-
+Vous trouverez dans le dossier deux versions du code, les deux sont fonctionnelles et possèdent leur spécificités. Ainsi, la version 1 a été testé d'assez nombreuses fois pour qu'on la considère comme sans bug mais elle est moins optimisée en stockage et en simplicité d'écriture. La version 2 est une version améliorée avec un gain d'optimisation et d'ergonomie pour l'utilisateur, néanmoins sa phase de test ayant été plus courte nous ne pouvons pas assurer qu'elle ne possède aucun bug que nous aurions raté.
 
 
 Version 1 : (fichiers Serveur.py et Client.py)
