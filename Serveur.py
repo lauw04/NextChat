@@ -23,9 +23,8 @@ import os
 clients = []
 #stocke les clients en recherche
 research = []
-#stocke les clients qui sont ou ont été dans un chat privé
-privateChat = []
-#thread that receives inputs at the server terminal 
+
+#Fonction qui reçoit les messages dans le terminal serveur 
 def serverManager():
 	while 1:
 		sentence = raw_input('see list?\n')
@@ -106,8 +105,6 @@ def clientManager(connectionSocket,c_id): #c_id est le client id
 						clients[c_id][4]=1
 						clients[c_id][5] = t_id #interlocuteur du client
 						clients[t_id][5] = c_id #interlocuteur de la cible
-						#stocke l'id des deux clients qui vont participer au chat privé
-						privateChat.append([c_id,t_id])
 						#change le statut pour garder une trace du chat privé
 						clients[c_id][6] = 1
 						clients[t_id][6] = 1
@@ -156,8 +153,6 @@ def clientManager(connectionSocket,c_id): #c_id est le client id
 						clients[c_id][4]=1
 						clients[c_id][5] = t_id
 						clients[t_id][5] = c_id
-						#stocke l'id des deux clients qui vont participer au chat privé
-						privateChat.append([c_id,t_id])
 						#change le statut pour garder une trace du chat privé
 						clients[c_id][6] = 1
 						clients[t_id][6] = 1
@@ -214,8 +209,6 @@ def clientManager(connectionSocket,c_id): #c_id est le client id
 						clients[t_id][4]=1
 						clients[t_id][5] = t_id2
 						clients[t_id2][5] = t_id
-						#stocke l'id des deux clients qui vont participer au chat privé
-						privateChat.append([t_id,t_id2])
 						#change le statut pour garder une trace du chat privé
 						clients[t_id][6] = 1
 						clients[t_id2][6] = 1
