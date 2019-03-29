@@ -12,7 +12,7 @@ research = {}
 #stocke les clients qui sont ou ont été dans un chat privé
 privateChat = {}
  
-def listClients():
+def serverManager():
 	while 1:
 		somethin = raw_input('Voulez vous voir la liste des clients connectés (list), la liste des clients en recherche (research), la liste des clients en conversation privée ou fermer le serveur (close) ?\n')
 		#list all available connections
@@ -159,7 +159,7 @@ except:
 	print "Port already in use"
 	serverSocket.close()
 	os._exit(0)
-t = Thread(target=listClients, args=())
+t = Thread(target=serverManager, args=())
 t.start()
 serverSocket.listen(1) 
 print "TCP server waiting connections on port %d ..." % (serverPort)
