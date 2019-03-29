@@ -61,8 +61,6 @@ def clientManager(name):
 		if not message:
 			break
 		serv_response = "%s sent: %s" % (name,message)
-		#stocke l'id du client qui a envoyé le message
-		clientSender = name
 		print serv_response
 
 		if name in privateChat.keys() :
