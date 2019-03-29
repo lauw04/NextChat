@@ -13,7 +13,7 @@ def receiveMessage(clientSocket):
 		while 1:
 			msgrecu = clientSocket.recv(1024) # reçoit une réponse du serveur
 			if msgrecu == "close":
-				print 'Fermeture du serveur'
+				print 'Fermeture du serveur.'
 				clientSocket.shutdown(socket.SHUT_RDWR) 
 				clientSocket.close()
 				os._exit(0)
