@@ -49,7 +49,7 @@ def listClients():
 	sys.exit("Finished Execution")
 
 def clientManager(name):
-	identification = "Client %s est connecté.\n" % (name)
+	identification = "Client %s est connecté." % (name)
 	print identification
 	for i in clients.keys():
 			clients[i][0].send(identification)
@@ -105,15 +105,15 @@ def clientManager(name):
 					clients[name][0].send("Vous êtes déjà dans l'accueil.\n")
 
 			elif message == "close":
-				serv_response = "Client %s left the room."%name
-				print "Client %s left the room."%name
+				serv_response = "L'utilisateur %s a quitté le serveur."%name
+				print "L'utilisateur %s a quitté le serveur."%name
 				for i in clients.keys():
 						clients[i][0].send(serv_response)	
 				break
 
 			else :
 				for i in clients.keys():
-					if i != clientSender and i not in privateChat.keys():
+					if i != name and i not in privateChat.keys():
 						clients[i][0].send(serv_response)
 
 		if len(research)>=3:
@@ -163,7 +163,7 @@ while 1:
 					nom = True
 					connectionSocket.send("Nom déjà utilisé, choisissez en un nouveau :")
 					break
-		connectionSocket.send("Vous êtes dans l'accueil, vous pouvez parler avec tous les autres utilisateurs qui ne sont pas en chat privé. Pour vous mettre en recherche d'un interlocuteur, tapez start. S'il y a d'autres utilisateurs en recherches vous serez mis en chat privé."\n)
+		connectionSocket.send("Vous êtes dans l'accueil, vous pouvez parler avec tous les autres utilisateurs qui ne sont pas en chat privé. Pour vous mettre en recherche d'un interlocuteur, tapez start. S'il y a d'autres utilisateurs en recherches vous serez mis en chat privé.\n")
 	except:
 		serverSocket.close()
 		os._exit(0)
