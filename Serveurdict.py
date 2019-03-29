@@ -52,7 +52,8 @@ def clientManager(name):
 	identification = "Client %s est connecté." % (name)
 	print identification
 	for i in clients.keys():
-			clients[i][0].send(identification)
+			if i not in privateChat.keys():
+				clients[i][0].send(identification)
 	while 1:	
 		try:
 			message = clients[name][0].recv(1024) # 
@@ -60,7 +61,7 @@ def clientManager(name):
 			os._exit(0)	
 		if not message:
 			break
-		serv_response = "%s sent: %s" % (name,message)
+		serv_response = "%s a envoyé: %s" % (name,message)
 		print serv_response
 
 		if name in privateChat.keys() :
@@ -105,10 +106,12 @@ def clientManager(name):
 					clients[name][0].send("Vous êtes déjà dans l'accueil.\n")
 
 			elif message == "close":
+				clients[name][0].send("Vous quittez le serveur.\n")
 				serv_response = "L'utilisateur %s a quitté le serveur."%name
 				print "L'utilisateur %s a quitté le serveur."%name
 				for i in clients.keys():
-						clients[i][0].send(serv_response)	
+						if i not in privateChat.keys():
+							clients[i][0].send(serv_response)	
 				break
 
 			else :
@@ -116,21 +119,30 @@ def clientManager(name):
 					if i != name and i not in privateChat.keys():
 						clients[i][0].send(serv_response)
 
-		if len(research)>=3:
+		if len(research)>=2:
 			a = random.randint(0,len(research)-1)
 			b = int(a)
-			while b==a:
+			compteur = 0
+			test = True
+			while b==a or (clients[research.keys()[a]][2]==research.keys()[b] and clients[research.keys()[b]][2]==research.keys()[a]):
 				b = random.randint(0,len(research)-1)
-			client1 = research.keys()[a]
-			client2 = research.keys()[b]
-			privateChat[client1]=[client1,client2]
-			privateChat[client2]=[client2,client1]
-			clients[client1][0].send("Vous êtes en chat privé avec %s. \n" %(client2))
-			clients[client1][0].send("Vous pouvez changer d'interlocuteur en tapant next, retourner dans l'accueil avec lobby et close pour quitter le serveur.\n")
-			clients[client2][0].send("Vous êtes en chat privé avec %s. \n" %(client1))
-			clients[client2][0].send("Vous pouvez changer d'interlocuteur en tapant next, retourner dans l'accueil avec lobby et close pour quitter le serveur.\n")
-			del research[client1]
-			del research[client2]
+				compteur += 1
+				if compteur > 10*len(research):
+					test = False
+					break
+			if test == True:
+				client1 = research.keys()[a]
+				client2 = research.keys()[b]
+				privateChat[client1]=[client1,client2]
+				privateChat[client2]=[client2,client1]
+				clients[client1][2]=client2
+				clients[client2][2]=client1
+				clients[client1][0].send("Vous êtes en chat privé avec %s. \n" %(client2))
+				clients[client1][0].send("Vous pouvez changer d'interlocuteur en tapant next, retourner dans l'accueil avec lobby et close pour quitter le serveur.\n")
+				clients[client2][0].send("Vous êtes en chat privé avec %s. \n" %(client1))
+				clients[client2][0].send("Vous pouvez changer d'interlocuteur en tapant next, retourner dans l'accueil avec lobby et close pour quitter le serveur.\n")
+				del research[client1]
+				del research[client2]
 			
 	print(clients[name][0])		
 	clients[name][0].close()
@@ -167,7 +179,7 @@ while 1:
 	except:
 		serverSocket.close()
 		os._exit(0)
-	clients[sentence]=[connectionSocket,addr]
+	clients[sentence]=[connectionSocket,addr,sentence]
 	test = Thread(target=clientManager, args=(sentence,))
 	test.start()
 serverSocket.close() 
